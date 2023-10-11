@@ -2,20 +2,25 @@ import { Navigate, Route, Routes } from "react-router-dom"
 import Connection from "./pages/Connection"
 import Home from "./pages/Home"
 import NotFound from "./pages/NotFound";
+import { createContext, useState } from "react";
+
+export const GlobalInfo = createContext();
 
 const App = () => {
-  const register = false;
-  return (
-    <Routes>
-      <Route path="/" element={
-        register ? <Home /> : <Navigate to="/login" />} exact
-      />
-      <Route path="/login" element={
-        register ? <Navigate to="/" /> : <Connection />}
-      />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [calendarDetails, setCalendarDetails] = useState([]);
 
+  return (
+    <GlobalInfo.Provider value={{ setIsLoggedIn, isLoggedIn, calendarDetails,setCalendarDetails }}>
+      <Routes>
+        <Route path="/loggedIn" element={
+          isLoggedIn ? <Home /> : <Navigate to="/" />} exact
+        />
+        <Route path="/" element={isLoggedIn ? <Navigate to="/loggedIn" /> : <Connection />}
+        />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </GlobalInfo.Provider>
   )
 }
 
